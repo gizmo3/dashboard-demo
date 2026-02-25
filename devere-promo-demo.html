@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>deVereAdmin — Product Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0f0f1a;
+    --card: #16162a;
+    --border: #252540;
+    --blue: #4f7fff;
+    --blue-glow: rgba(79,127,255,0.25);
+    --green: #22d87e;
+    --amber: #f5a623;
+    --red: #ff4f6a;
+    --purple: #a855f7;
+    --text: #f0f0ff;
+    --muted: #6b6b9a;
+    --dim: #3a3a5c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===================== STAGE ===================== */
+  #stage {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+  }
+
+  .scene.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ===================== BACKGROUND FX ===================== */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,127,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,127,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb1 {
+    width: 600px; height: 600px;
+    background: rgba(79,127,255,0.08);
+    top: -200px; left: -200px;
+  }
+
+  .orb2 {
+    width: 500px; height: 500px;
+    background: rgba(168,85,247,0.06);
+    bottom: -150px; right: -150px;
+  }
+
+  /* ===================== CONTROLS ===================== */
+  #controls {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 9999;
+    background: rgba(15,15,26,0.85);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    backdrop-filter: blur(12px);
+  }
+
+  #controls button {
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    font-size: 18px;
+  }
+
+  #controls button:hover { background: var(--border); }
+
+  .progress-bar {
+    width: 200px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+
+  #scene-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .dot-nav {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--dim);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .dot.active { background: var(--blue); width: 18px; border-radius: 3px; }
+
+  /* ===================== SCENE 1 – TITLE ===================== */
+  .title-scene {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    gap: 0;
+  }
+
+  .logo-mark {
+    font-family: 'Syne', sans-serif;
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: none;
+  }
+
+  .logo-mark .accent { color: var(--blue); }
+
+  .tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 16px;
+    opacity: 0;
+  }
+
+  .title-divider {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    margin: 32px auto;
+    opacity: 0;
+  }
+
+  .title-sub {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(240,240,255,0.6);
+    max-width: 480px;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79,127,255,0.12);
+    border: 1px solid rgba(79,127,255,0.3);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--blue);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 32px;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes expandWidth {
+    to { width: 200px; opacity: 1; }
+  }
+
+  .scene.active .logo-mark {
+    animation: fadeUp 0.7s 0.1s forwards ease;
+  }
+
+  .scene.active .tagline {
+    animation: fadeUp 0.7s 0.35s forwards ease;
+  }
+
+  .scene.active .title-divider {
+    animation: expandWidth 0.8s 0.6s forwards ease;
+  }
+
+  .scene.active .title-sub {
+    animation: fadeUp 0.7s 0.8s forwards ease;
+  }
+
+  .scene.active .title-badge {
+    animation: fadeUp 0.7s 1.1s forwards ease;
+  }
+
+  /* ===================== SCENE 2 – DASHBOARD ===================== */
+  .dashboard-scene {
+    width: 100%;
+    height: 100%;
+    padding: 32px 40px;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .scene-headline {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 10;
+  }
+
+  .scene-headline h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--blue);
+    opacity: 0;
+  }
+
+  .scene.active .scene-headline h2 {
+    animation: fadeUp 0.5s 0.1s forwards ease;
+  }
+
+  .mock-app {
+    width: 100%;
+    max-width: 1100px;
+    height: 580px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(79,127,255,0.1);
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    margin-top: 60px;
+  }
+
+  .scene.active .mock-app {
+    animation: fadeUp 0.7s 0.3s forwards ease;
+  }
+
+  /* Sidebar */
+  .mock-sidebar {
+    width: 220px;
+    background: #0b0b18;
+    border-right: 1px solid var(--border);
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .mock-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 8px 10px 16px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .mock-logo span { color: var(--blue); }
+
+  .mock-nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 10px 4px;
+  }
+
+  .mock-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #8888aa;
+    cursor: pointer;
+  }
+
+  .mock-nav-item.active {
+    background: var(--blue);
+    color: white;
+  }
+
+  .mock-nav-item svg { flex-shrink: 0; }
+
+  .mock-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .mock-main {
+    flex: 1;
+    padding: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .mock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mock-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .mock-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  .mock-btn-primary { background: var(--blue); color: white; }
+  .mock-btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+
+  .mock-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .mock-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mock-stat::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .mock-stat.s-red::after { background: var(--red); }
+  .mock-stat.s-amber::after { background: var(--amber); }
+  .mock-stat.s-blue::after { background: var(--blue); }
+  .mock-stat.s-green::after { background: var(--green); }
+
+  .mock-stat-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+
+  .mock-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  .s-red .mock-stat-val { color: var(--red); }
+  .s-amber .mock-stat-val { color: var(--amber); }
+  .s-blue .mock-stat-val { color: var(--blue); }
+  .s-green .mock-stat-val { color: var(--green); }
+
+  .mock-table-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .mock-table-head {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }
+
+  .mock-table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: background 0.1s;
+  }
+
+  .mock-table-row:hover { background: rgba(79,127,255,0.04); }
+
+  .mock-table-row:last-child { border-bottom: none; }
+
+  .client-cell { display: flex; flex-direction: column; gap: 2px; }
+  .client-name-cell { font-weight: 600; color: var(--text); font-size: 13px; }
+  .client-type-cell { font-size: 11px; color: var(--muted); }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .status-pill::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .pill-red { background: rgba(255,79,106,0.12); color: var(--red); }
+  .pill-amber { background: rgba(245,166,35,0.12); color: var(--amber); }
+  .pill-blue { background: rgba(79,127,255,0.12); color: var(--blue); }
+  .pill-green { background: rgba(34,216,126,0.12); color: var(--green); }
+
+  .days-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  .days-tag.overdue { background: rgba(255,79,106,0.1); color: var(--red); }
+
+  /* Row animation */
+  .scene.active .mock-table-row:nth-child(1) { animation: rowIn 0.4s 0.8s forwards ease; }
+  .scene.active .mock-table-row:nth-child(2) { animation: rowIn 0.4s 0.95s forwards ease; }
+  .scene.active .mock-table-row:nth-child(3) { animation: rowIn 0.4s 1.1s forwards ease; }
+  .scene.active .mock-table-row:nth-child(4) { animation: rowIn 0.4s 1.25s forwards ease; }
+  .scene.active .mock-table-row:nth-child(5) { animation: rowIn 0.4s 1.4s forwards ease; }
+
+  @keyframes rowIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===================== SCENE 3 – DETAIL MODAL ===================== */
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+  }
+
+  .mock-modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 680px;
+    max-height: 500px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+
+  .scene.active .mock-modal {
+    animation: modalIn 0.5s 0.3s forwards ease;
+  }
+
+  @keyframes modalIn {
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .mock-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mock-modal-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .close-btn {
+    width: 28px; height: 28px;
+    background: var(--surface);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .mock-modal-body {
+    padding: 20px 22px;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .modal-left { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .modal-right { width: 240px; display: flex; flex-direction: column; gap: 12px; }
+
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .form-group select, .form-group input {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+  }
+
+  .mock-checklist-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .mock-checklist {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    opacity: 0;
+  }
+
+  .check-box {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .check-box.done {
+    background: var(--green);
+    border-color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 10px;
+  }
+
+  .check-item.done { color: var(--muted); text-decoration: line-through; }
+  .check-item.done > .check-box { background: var(--green); border-color: var(--green); }
+
+  .scene.active .check-item:nth-child(1) { animation: fadeUp 0.3s 0.6s forwards; }
+  .scene.active .check-item:nth-child(2) { animation: fadeUp 0.3s 0.75s forwards; }
+  .scene.active .check-item:nth-child(3) { animation: fadeUp 0.3s 0.9s forwards; }
+  .scene.active .check-item:nth-child(4) { animation: fadeUp 0.3s 1.05s forwards; }
+  .scene.active .check-item:nth-child(5) { animation: fadeUp 0.3s 1.2s forwards; }
+
+  .timeline-item-mock {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    opacity: 0;
+  }
+
+  .tl-dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--blue);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .tl-content .tl-date { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .tl-content .tl-text { font-size: 12px; color: #9999bb; margin-top: 2px; }
+
+  .scene.active .timeline-item-mock:nth-child(1) { animation: fadeUp 0.4s 0.7s forwards; }
+  .scene.active .timeline-item-mock:nth-child(2) { animation: fadeUp 0.4s 0.95s forwards; }
+  .scene.active .timeline-item-mock:nth-child(3) { animation: fadeUp 0.4s 1.2s forwards; }
+
+  .overdue-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(255,79,106,0.1);
+    border: 1px solid rgba(255,79,106,0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--red);
+    opacity: 0;
+  }
+
+  .scene.active .overdue-alert { animation: fadeUp 0.4s 0.5s forwards; }
+
+  /* ===================== SCENE 4 – EMAIL ACTIVITY ===================== */
+  .email-panel {
+    width: 100%;
+    max-width: 1000px;
+    height: 580px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    margin-top: 60px;
+  }
+
+  .scene.active .email-panel {
+    animation: fadeUp 0.7s 0.3s forwards ease;
+  }
+
+  .email-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .email-panel-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .connected-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  .connected-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(34,216,126,0.5);
+  }
+
+  .email-list {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .email-card-mock {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .scene.active .email-card-mock:nth-child(1) { animation: rowIn 0.4s 0.6s forwards; }
+  .scene.active .email-card-mock:nth-child(2) { animation: rowIn 0.4s 0.85s forwards; }
+  .scene.active .email-card-mock:nth-child(3) { animation: rowIn 0.4s 1.1s forwards; }
+
+  .ecm-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .ecm-sender strong { font-size: 13px; color: var(--text); }
+  .ecm-sender span { font-size: 11px; color: var(--muted); display: block; }
+  .ecm-date { font-size: 11px; color: var(--muted); }
+
+  .ecm-subject { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+
+  .ecm-snippet { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 10px; }
+
+  .auto-match-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(79,127,255,0.06);
+    border: 1px solid rgba(79,127,255,0.2);
+    border-radius: 6px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+
+  .auto-match-bar .match-label { color: var(--muted); }
+  .auto-match-bar .match-name { color: var(--blue); font-weight: 600; }
+  .auto-match-bar .match-reason { color: var(--muted); font-size: 11px; }
+
+  .confirm-btn {
+    margin-left: auto;
+    padding: 4px 12px;
+    border-radius: 5px;
+    background: var(--green);
+    color: white;
+    border: none;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .ecm-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .ecm-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  .ecm-btn.ai { color: var(--purple); border-color: rgba(168,85,247,0.3); }
+
+  /* ===================== SCENE 5 – AI SIDEBAR ===================== */
+  .ai-scene-layout {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    height: 580px;
+    gap: 16px;
+    margin-top: 60px;
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  .scene.active .ai-scene-layout { animation: fadeUp 0.7s 0.3s forwards ease; }
+
+  .ai-sidebar-mock {
+    width: 360px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+
+  .ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  .ai-title-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ai-avatar {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .ai-name { font-weight: 600; font-size: 14px; }
+  .ai-role { font-size: 11px; color: var(--muted); }
+
+  .ai-messages {
+    flex: 1;
+    padding: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-msg {
+    display: flex;
+    gap: 8px;
+    max-width: 100%;
+    opacity: 0;
+  }
+
+  .ai-msg.user { flex-direction: row-reverse; }
+
+  .ai-msg-content {
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 12px;
+    max-width: 80%;
+  }
+
+  .ai-msg.user .ai-msg-content {
+    background: var(--blue);
+    color: white;
+    border-radius: 12px 12px 4px 12px;
+  }
+
+  .ai-msg.bot .ai-msg-content {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 12px 12px 12px 4px;
+  }
+
+  .ai-avatar-sm {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .ai-detail-row {
+    display: block;
+    padding: 2px 0;
+    color: #9999bb;
+    font-size: 12px;
+  }
+
+  .ai-warning-inline {
+    display: block;
+    padding: 6px 8px;
+    background: rgba(255,79,106,0.1);
+    border-radius: 5px;
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .ai-input-bar {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  .ai-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+  }
+
+  .ai-send {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--blue);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .scene.active .ai-msg:nth-child(1) { animation: fadeUp 0.4s 0.4s forwards; }
+  .scene.active .ai-msg:nth-child(2) { animation: fadeUp 0.4s 0.9s forwards; }
+  .scene.active .ai-msg:nth-child(3) { animation: fadeUp 0.4s 1.4s forwards; }
+  .scene.active .ai-msg:nth-child(4) { animation: fadeUp 0.4s 1.8s forwards; }
+
+  .ai-context-panel {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .context-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .context-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .context-stat-row {
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+  }
+
+  .ctx-stat {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .ctx-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+
+  .ctx-stat-label { font-size: 11px; color: var(--muted); }
+
+  .scene.active .context-stat-row { animation: fadeUp 0.5s 0.6s forwards; }
+
+  .stalled-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .stalled-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--card);
+    border-radius: 8px;
+    font-size: 12px;
+    opacity: 0;
+    border: 1px solid var(--border);
+  }
+
+  .stalled-item strong { font-size: 13px; }
+  .stalled-item span { color: var(--muted); }
+
+  .scene.active .stalled-item:nth-child(1) { animation: rowIn 0.4s 0.7s forwards; }
+  .scene.active .stalled-item:nth-child(2) { animation: rowIn 0.4s 0.9s forwards; }
+  .scene.active .stalled-item:nth-child(3) { animation: rowIn 0.4s 1.1s forwards; }
+
+  /* ===================== SCENE 6 – AI DRAFTS ===================== */
+  .drafts-scene-wrap {
+    width: 100%;
+    max-width: 900px;
+    height: 580px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: scale(0.96) translateY(20px);
+    margin-top: 60px;
+  }
+
+  .scene.active .drafts-scene-wrap { animation: fadeUp 0.7s 0.3s forwards ease; }
+
+  .drafts-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .drafts-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  .draft-cards {
+    flex: 1;
+    padding: 16px 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .draft-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    opacity: 0;
+  }
+
+  .scene.active .draft-card:nth-child(1) { animation: rowIn 0.4s 0.5s forwards; }
+  .scene.active .draft-card:nth-child(2) { animation: rowIn 0.4s 0.75s forwards; }
+  .scene.active .draft-card:nth-child(3) { animation: rowIn 0.4s 1.0s forwards; }
+
+  .draft-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .draft-card-client { font-weight: 600; font-size: 14px; }
+  .draft-card-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .draft-reason {
+    font-size: 12px;
+    color: var(--amber);
+    background: rgba(245,166,35,0.08);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+
+  .draft-subj { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .draft-subj strong { color: var(--muted); }
+
+  .draft-preview {
+    font-size: 12px;
+    color: #6b6b9a;
+    line-height: 1.5;
+    border-left: 2px solid rgba(168,85,247,0.3);
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .draft-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn-outlook {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-review {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    cursor: pointer;
+  }
+
+  /* ===================== SCENE 7 – CLOSE ===================== */
+  .outro-scene {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 32px;
+    z-index: 1;
+  }
+
+  .outro-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .outro-logo .accent { color: var(--blue); }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 700px;
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .feature-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .chip-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .chip-icon.blue { background: rgba(79,127,255,0.15); }
+  .chip-icon.green { background: rgba(34,216,126,0.15); }
+  .chip-icon.purple { background: rgba(168,85,247,0.15); }
+  .chip-icon.amber { background: rgba(245,166,35,0.15); }
+  .chip-icon.red { background: rgba(255,79,106,0.15); }
+
+  .outro-tagline {
+    font-size: 16px;
+    color: var(--muted);
+    opacity: 0;
+    transform: translateY(10px);
+    font-weight: 300;
+  }
+
+  .built-by {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    opacity: 0;
+  }
+
+  .scene.active .outro-logo { animation: fadeUp 0.7s 0.1s forwards; }
+  .scene.active .feature-grid { animation: fadeUp 0.7s 0.5s forwards; }
+  .scene.active .outro-tagline { animation: fadeUp 0.7s 1.0s forwards; }
+  .scene.active .built-by { animation: fadeUp 0.7s 1.5s forwards; }
+
+  /* Overline label style for scenes */
+  .overline {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 8px;
+    opacity: 0;
+  }
+
+  .scene.active .overline { animation: fadeUp 0.5s 0.15s forwards; }
+
+  .feature-callout {
+    position: absolute;
+    background: rgba(15,15,26,0.9);
+    border: 1px solid rgba(79,127,255,0.4);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 13px;
+    max-width: 260px;
+    line-height: 1.5;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    z-index: 20;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .feature-callout strong { color: var(--blue); }
+  .feature-callout.top-left { top: 120px; left: 60px; }
+  .feature-callout.top-right { top: 140px; right: 60px; }
+  .feature-callout.bottom-left { bottom: 100px; left: 60px; }
+
+  .scene.active .feature-callout.top-left { animation: fadeUp 0.5s 1.5s forwards; }
+  .scene.active .feature-callout.top-right { animation: fadeUp 0.5s 1.8s forwards; }
+  .scene.active .feature-callout.bottom-left { animation: fadeUp 0.5s 2.1s forwards; }
+
+  /* pulse on connected dot */
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,216,126,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(34,216,126,0); }
+  }
+
+  .connected-dot { animation: pulse 2s infinite; }
+
+  /* scan line effect */
+  .scanline {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,20,0.03) 2px,
+      rgba(0,0,20,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9998;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background FX -->
+<div class="bg-grid"></div>
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="scanline"></div>
+
+<!-- ======================== STAGE ======================== -->
+<div id="stage">
+
+  <!-- SCENE 1: Title -->
+  <div class="scene title-scene active" id="scene-0">
+    <div style="z-index:1; text-align:center;">
+      <span class="overline">Built for deVere Administrators</span>
+      <div class="logo-mark">deVere<span class="accent">Admin</span></div>
+      <div class="tagline">Pension Transfer Management Platform</div>
+      <div class="title-divider"></div>
+      <div class="title-sub">A purpose-built dashboard for managing IVCM, SIPP, Garrison Bridge, and Superannuation transfers — from first contact to completion.</div>
+      <div class="title-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        IVCM · SIPP · Garrison Bridge · Superannuation
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 2: Dashboard Overview -->
+  <div class="scene dashboard-scene" id="scene-1" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div class="scene-headline"><h2>Live Transfer Dashboard</h2></div>
+    <div class="mock-app">
+      <!-- Sidebar -->
+      <div class="mock-sidebar">
+        <div class="mock-logo">deVere<span>Admin</span></div>
+        <div class="mock-nav-label">Overview</div>
+        <div class="mock-nav-item active">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+          Dashboard
+        </div>
+        <div class="mock-nav-label">Transfers</div>
+        <div class="mock-nav-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2z"/></svg>
+          IVCM Transfers
+          <span class="mock-badge">8</span>
+        </div>
+        <div class="mock-nav-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16M3 21h18"/></svg>
+          Garrison Bridge
+          <span class="mock-badge">3</span>
+        </div>
+        <div class="mock-nav-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/></svg>
+          SIPP
+          <span class="mock-badge">5</span>
+        </div>
+        <div class="mock-nav-label" style="margin-top:12px;">Alerts</div>
+        <div class="mock-nav-item">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Due Today
+          <span class="mock-badge">4</span>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="mock-main">
+        <div class="mock-header">
+          <h1>Transfer Dashboard</h1>
+          <div style="display:flex;gap:8px;">
+            <div class="mock-btn mock-btn-secondary">Export</div>
+            <div class="mock-btn mock-btn-primary">+ New Transfer</div>
+          </div>
+        </div>
+
+        <div class="mock-stats">
+          <div class="mock-stat s-red">
+            <div class="mock-stat-label">Needs Follow-up</div>
+            <div class="mock-stat-val">7</div>
+          </div>
+          <div class="mock-stat s-amber">
+            <div class="mock-stat-label">Awaiting Client</div>
+            <div class="mock-stat-val">12</div>
+          </div>
+          <div class="mock-stat s-blue">
+            <div class="mock-stat-label">In Progress</div>
+            <div class="mock-stat-val">9</div>
+          </div>
+          <div class="mock-stat s-green">
+            <div class="mock-stat-label">Completed (30d)</div>
+            <div class="mock-stat-val">14</div>
+          </div>
+        </div>
+
+        <div class="mock-table-container">
+          <div class="mock-table-head">
+            <div>Client</div>
+            <div>Type</div>
+            <div>Status</div>
+            <div>Doc Status</div>
+            <div>Days</div>
+          </div>
+          <div class="mock-table-row">
+            <div class="client-cell"><div class="client-name-cell">James Hartley</div><div class="client-type-cell">IVCM Transfer</div></div>
+            <div>IVCM</div>
+            <div><span class="status-pill pill-red">Follow-up</span></div>
+            <div><span style="font-size:11px;color:var(--amber);">Sent for Sig</span></div>
+            <div><span class="days-tag overdue">14d ago</span></div>
+          </div>
+          <div class="mock-table-row">
+            <div class="client-cell"><div class="client-name-cell">Sarah Chen</div><div class="client-type-cell">SIPP Transfer</div></div>
+            <div>SIPP</div>
+            <div><span class="status-pill pill-amber">Waiting</span></div>
+            <div><span style="font-size:11px;color:var(--blue);">SOA Drafted</span></div>
+            <div><span class="days-tag">3d ago</span></div>
+          </div>
+          <div class="mock-table-row">
+            <div class="client-cell"><div class="client-name-cell">Michael O'Brien</div><div class="client-type-cell">Garrison Bridge</div></div>
+            <div>GB</div>
+            <div><span class="status-pill pill-blue">In Progress</span></div>
+            <div><span style="font-size:11px;color:var(--muted);">Pending</span></div>
+            <div><span class="days-tag">1d ago</span></div>
+          </div>
+          <div class="mock-table-row">
+            <div class="client-cell"><div class="client-name-cell">Priya Sharma</div><div class="client-type-cell">IVCM Transfer</div></div>
+            <div>IVCM</div>
+            <div><span class="status-pill pill-amber">Waiting</span></div>
+            <div><span style="font-size:11px;color:var(--amber);">Partially Signed</span></div>
+            <div><span class="days-tag overdue">8d ago</span></div>
+          </div>
+          <div class="mock-table-row">
+            <div class="client-cell"><div class="client-name-cell">Thomas Wright</div><div class="client-type-cell">Superannuation</div></div>
+            <div>Super</div>
+            <div><span class="status-pill pill-green">Complete</span></div>
+            <div><span style="font-size:11px;color:var(--green);">Completed</span></div>
+            <div><span class="days-tag">2d ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Callout -->
+    <div class="feature-callout top-right">
+      <strong>Real-time sync</strong> via Firebase — changes reflect instantly across all sessions
+    </div>
+    <div class="feature-callout bottom-left">
+      <strong>Smart status tracking</strong> with overdue detection, follow-up alerts, and doc status
+    </div>
+  </div>
+
+  <!-- SCENE 3: Client Detail -->
+  <div class="scene dashboard-scene" id="scene-2" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div class="scene-headline"><h2>Transfer Detail & Document Tracking</h2></div>
+    <div class="mock-app" style="margin-top:60px; position:relative;">
+      <!-- Blurred background app -->
+      <div class="mock-sidebar" style="opacity:0.4;">
+        <div class="mock-logo">deVere<span style="color:var(--blue);">Admin</span></div>
+      </div>
+      <div class="mock-main" style="opacity:0.3; filter:blur(2px);">
+        <div class="mock-header"><h1>Transfer Dashboard</h1></div>
+      </div>
+      <!-- Modal overlay -->
+      <div class="modal-backdrop">
+        <div class="mock-modal">
+          <div class="mock-modal-header">
+            <h2>James Hartley</h2>
+            <div class="close-btn">✕</div>
+          </div>
+          <div class="mock-modal-body">
+            <div class="modal-left">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="form-group">
+                  <label>Transfer Type</label>
+                  <select><option>IVCM</option></select>
+                </div>
+                <div class="form-group">
+                  <label>Status</label>
+                  <select><option>Needs Follow-up</option></select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Schemes</label>
+                <input type="text" value="Scottish Widows, Prudential" readonly>
+              </div>
+              <div class="overdue-alert">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Follow-up overdue! Was due 11 Feb 2025
+              </div>
+              <div>
+                <div class="mock-checklist-title">Document Checklist</div>
+                <div class="mock-checklist">
+                  <div class="check-item done">
+                    <div class="check-box done">✓</div>
+                    SOA (Statement of Advice)
+                  </div>
+                  <div class="check-item done">
+                    <div class="check-box done">✓</div>
+                    AESF Application Form
+                  </div>
+                  <div class="check-item">
+                    <div class="check-box"></div>
+                    UKPTRD — wet signed copy
+                  </div>
+                  <div class="check-item">
+                    <div class="check-box"></div>
+                    APSS Form — last page
+                  </div>
+                  <div class="check-item">
+                    <div class="check-box"></div>
+                    2x POA (dated last 3 months)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-right">
+              <div class="mock-checklist-title">Timeline</div>
+              <div class="timeline-item-mock">
+                <div class="tl-dot"></div>
+                <div class="tl-content">
+                  <div class="tl-date">20 Feb 2025</div>
+                  <div class="tl-text">Docs sent to IVCM for processing</div>
+                </div>
+              </div>
+              <div class="timeline-item-mock">
+                <div class="tl-dot" style="background:var(--amber)"></div>
+                <div class="tl-content">
+                  <div class="tl-date">12 Feb 2025</div>
+                  <div class="tl-text">Chased Scottish Widows for update</div>
+                </div>
+              </div>
+              <div class="timeline-item-mock">
+                <div class="tl-dot" style="background:var(--green)"></div>
+                <div class="tl-content">
+                  <div class="tl-date">03 Feb 2025</div>
+                  <div class="tl-text">Client signed SOA via DocuSign</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-callout top-right">
+      <strong>Per-transfer document checklists</strong> tailored to transfer type — IVCM, SIPP, Garrison Bridge
+    </div>
+  </div>
+
+  <!-- SCENE 4: Email Activity -->
+  <div class="scene dashboard-scene" id="scene-3" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div class="scene-headline"><h2>Outlook Email Integration</h2></div>
+    <div class="email-panel">
+      <div class="email-panel-header">
+        <h1>Email Activity</h1>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div class="connected-badge">
+            <div class="connected-dot"></div>
+            Connected to Outlook
+          </div>
+          <div class="mock-btn mock-btn-secondary" style="padding:7px 14px;font-size:12px;">Refresh</div>
+        </div>
+      </div>
+      <div class="email-list">
+        <!-- Email 1 - with auto match -->
+        <div class="email-card-mock">
+          <div class="ecm-header">
+            <div class="ecm-sender">
+              <strong>IVCM Operations Team</strong>
+              <span>operations@ivcm.com</span>
+            </div>
+            <div class="ecm-date">25 Feb 2025, 9:14 AM</div>
+          </div>
+          <div class="ecm-subject">RE: Transfer Update — James Hartley / Scottish Widows</div>
+          <div class="ecm-snippet">Hi Jordan, We have now received the APSS form and the transfer is progressing. We anticipate...</div>
+          <div class="auto-match-bar">
+            <span class="match-label">Auto-matched to:</span>
+            <span class="match-name">James Hartley</span>
+            <span class="match-reason">(Client name match, Scheme match)</span>
+            <button class="confirm-btn">Confirm ✓</button>
+          </div>
+          <div class="ecm-actions">
+            <button class="ecm-btn ai">⚡ AI Analyse</button>
+            <button class="ecm-btn">↩ Draft Reply</button>
+          </div>
+        </div>
+
+        <!-- Email 2 -->
+        <div class="email-card-mock">
+          <div class="ecm-header">
+            <div class="ecm-sender">
+              <strong>Sarah Chen</strong>
+              <span>sarah.chen@gmail.com</span>
+            </div>
+            <div class="ecm-date">24 Feb 2025, 3:42 PM 📎</div>
+          </div>
+          <div class="ecm-subject">Documents — my SIPP transfer</div>
+          <div class="ecm-snippet">Hi Jordan, please find attached the signed documents you requested. Let me know if you need anything else...</div>
+          <div class="auto-match-bar">
+            <span class="match-label">Auto-matched to:</span>
+            <span class="match-name">Sarah Chen</span>
+            <span class="match-reason">(Client name match)</span>
+            <button class="confirm-btn">Confirm ✓</button>
+          </div>
+          <div class="ecm-actions">
+            <button class="ecm-btn ai">⚡ AI Analyse</button>
+            <button class="ecm-btn">↩ Draft Reply</button>
+          </div>
+        </div>
+
+        <!-- Email 3 -->
+        <div class="email-card-mock">
+          <div class="ecm-header">
+            <div class="ecm-sender">
+              <strong>Global SIPP Admin</strong>
+              <span>admin@globalsipp.co.uk</span>
+            </div>
+            <div class="ecm-date">24 Feb 2025, 11:20 AM</div>
+          </div>
+          <div class="ecm-subject">Pension Transfer — Action Required</div>
+          <div class="ecm-snippet">Please note that additional documentation is required to process this transfer. We require a wet signature on...</div>
+          <div class="ecm-actions">
+            <button class="ecm-btn ai">⚡ AI Analyse</button>
+            <button class="ecm-btn">↩ Draft Reply</button>
+            <select style="padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;margin-left:auto;">
+              <option>Link to transfer...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-callout top-right">
+      <strong>Auto-matching</strong> links incoming emails to transfers using name, scheme, and keyword detection
+    </div>
+    <div class="feature-callout bottom-left">
+      <strong>AI Analyse</strong> reads email content and suggests tracker updates, status changes, and replies
+    </div>
+  </div>
+
+  <!-- SCENE 5: AI Chat -->
+  <div class="scene dashboard-scene" id="scene-4" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div class="scene-headline"><h2>AI Senior Administrator</h2></div>
+    <div class="ai-scene-layout">
+      <div class="ai-sidebar-mock">
+        <div class="ai-header">
+          <div class="ai-title-block">
+            <div class="ai-avatar">AI</div>
+            <div>
+              <div class="ai-name">DeVere AI Admin</div>
+              <div class="ai-role">Senior Administrator</div>
+            </div>
+          </div>
+        </div>
+        <div class="ai-messages">
+          <div class="ai-msg bot">
+            <div class="ai-avatar-sm">AI</div>
+            <div class="ai-msg-content">
+              Hello, I'm your <strong>DeVere Senior Administrator</strong>. Ask me anything about your transfers.
+            </div>
+          </div>
+          <div class="ai-msg user">
+            <div class="ai-msg-content">Show me all stalled transfers</div>
+          </div>
+          <div class="ai-msg bot">
+            <div class="ai-avatar-sm">AI</div>
+            <div class="ai-msg-content">
+              <strong>3 stalled transfers</strong> (no update in 7+ days):<br><br>
+              <span class="ai-detail-row">James Hartley · IVCM · 14d ago</span>
+              <span class="ai-detail-row">Priya Sharma · IVCM · 8d ago</span>
+              <span class="ai-detail-row">David Park · SIPP · 9d ago</span>
+              <span class="ai-warning-inline">2 of these have overdue follow-up dates</span>
+            </div>
+          </div>
+          <div class="ai-msg user">
+            <div class="ai-msg-content">Draft a chase email for James Hartley</div>
+          </div>
+        </div>
+        <div class="ai-input-bar">
+          <input class="ai-input" type="text" placeholder="Ask about a client or transfer...">
+          <button class="ai-send">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-context-panel">
+        <div class="context-header">Portfolio Overview</div>
+        <div class="context-body">
+          <div class="context-stat-row">
+            <div class="ctx-stat">
+              <div class="ctx-stat-val" style="color:var(--red);">7</div>
+              <div class="ctx-stat-label">Need Follow-up</div>
+            </div>
+            <div class="ctx-stat">
+              <div class="ctx-stat-val" style="color:var(--amber);">3</div>
+              <div class="ctx-stat-label">Stalled 7d+</div>
+            </div>
+            <div class="ctx-stat">
+              <div class="ctx-stat-val" style="color:var(--amber);">4</div>
+              <div class="ctx-stat-label">Overdue</div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;">Stalled Transfers</div>
+          <div class="stalled-list">
+            <div class="stalled-item">
+              <div><strong>James Hartley</strong><br><span>IVCM · Needs Follow-up</span></div>
+              <span class="days-tag overdue">14d</span>
+            </div>
+            <div class="stalled-item">
+              <div><strong>David Park</strong><br><span>SIPP · Awaiting Client</span></div>
+              <span class="days-tag overdue">9d</span>
+            </div>
+            <div class="stalled-item">
+              <div><strong>Priya Sharma</strong><br><span>IVCM · Awaiting Client</span></div>
+              <span class="days-tag overdue">8d</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 6: AI Drafts -->
+  <div class="scene dashboard-scene" id="scene-5" style="flex-direction:column; align-items:center; justify-content:flex-start;">
+    <div class="scene-headline"><h2>AI Proactive Email Drafts</h2></div>
+    <div class="drafts-scene-wrap">
+      <div class="drafts-header">
+        <h1>AI Drafts</h1>
+        <div class="ai-badge">
+          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          AI-Generated
+        </div>
+        <div style="margin-left:auto;font-size:13px;color:var(--muted);">3 drafts ready to review</div>
+      </div>
+      <div class="draft-cards">
+        <div class="draft-card">
+          <div class="draft-card-top">
+            <div>
+              <div class="draft-card-client">James Hartley</div>
+              <div class="draft-card-meta">IVCM Transfer · To: IVCM Operations Team</div>
+            </div>
+            <span class="status-pill pill-red">High</span>
+          </div>
+          <div class="draft-reason">⚠ Follow-up overdue by 14 days — last chased 03 Feb</div>
+          <div class="draft-subj"><strong>Subject:</strong> Transfer Update Request — James Hartley / Scottish Widows</div>
+          <div class="draft-preview">Hi IVCM Team, I hope you're well. I'm following up on the transfer for James Hartley regarding his Scottish Widows pension. Could you please advise on the current status and any outstanding...</div>
+          <div class="draft-actions">
+            <button class="btn-outlook">Save to Outlook Drafts</button>
+            <button class="btn-review">Review & Edit</button>
+            <button class="btn-review">Dismiss</button>
+          </div>
+        </div>
+        <div class="draft-card">
+          <div class="draft-card-top">
+            <div>
+              <div class="draft-card-client">Priya Sharma</div>
+              <div class="draft-card-meta">IVCM Transfer · To: Client</div>
+            </div>
+            <span class="status-pill pill-amber">Medium</span>
+          </div>
+          <div class="draft-reason">📋 Wet signature documents outstanding — 8 days since last contact</div>
+          <div class="draft-subj"><strong>Subject:</strong> Action Required — Wet Signature Documents</div>
+          <div class="draft-preview">Hi Priya, I hope you're well. Just following up on the wet signature documents required for your pension transfer. Could you please sign the attached and return them at your earliest convenience...</div>
+          <div class="draft-actions">
+            <button class="btn-outlook">Save to Outlook Drafts</button>
+            <button class="btn-review">Review & Edit</button>
+            <button class="btn-review">Dismiss</button>
+          </div>
+        </div>
+        <div class="draft-card">
+          <div class="draft-card-top">
+            <div>
+              <div class="draft-card-client">David Park</div>
+              <div class="draft-card-meta">SIPP Transfer · To: Global SIPP Admin</div>
+            </div>
+            <span class="status-pill pill-amber">Medium</span>
+          </div>
+          <div class="draft-reason">🔵 Stalled 9 days — Global SIPP not yet confirmed receipt of documents</div>
+          <div class="draft-subj"><strong>Subject:</strong> Transfer Status Request — David Park</div>
+          <div class="draft-preview">Dear Global SIPP Team, I'm writing to request an update on the pension transfer for our client David Park. Could you please confirm receipt of the documents submitted on 16 Feb...</div>
+          <div class="draft-actions">
+            <button class="btn-outlook">Save to Outlook Drafts</button>
+            <button class="btn-review">Review & Edit</button>
+            <button class="btn-review">Dismiss</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 7: Outro -->
+  <div class="scene outro-scene" id="scene-6">
+    <div class="outro-logo">deVere<span class="accent">Admin</span></div>
+    <div class="feature-grid">
+      <div class="feature-chip">
+        <div class="chip-icon blue">📊</div>
+        Transfer Tracking
+      </div>
+      <div class="feature-chip">
+        <div class="chip-icon green">✅</div>
+        Document Checklists
+      </div>
+      <div class="feature-chip">
+        <div class="chip-icon blue">📧</div>
+        Outlook Integration
+      </div>
+      <div class="feature-chip">
+        <div class="chip-icon purple">⚡</div>
+        AI Analysis & Drafts
+      </div>
+      <div class="feature-chip">
+        <div class="chip-icon amber">🔔</div>
+        Follow-up Alerts
+      </div>
+      <div class="feature-chip">
+        <div class="chip-icon blue">📄</div>
+        PDF Tool Bridge
+      </div>
+    </div>
+    <div class="outro-tagline">One platform. Every transfer. From first contact to completion.</div>
+    <div class="built-by">Built by Jordan · deVere Australia</div>
+  </div>
+
+</div>
+
+<!-- Controls -->
+<div id="controls">
+  <button id="prevBtn" onclick="prevScene()" title="Previous">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <button id="playBtn" onclick="togglePlay()" title="Play/Pause">
+    <svg id="playIcon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4l15 8-15 8V4z"/></svg>
+  </button>
+  <div class="dot-nav" id="dotNav"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <span id="scene-label">1 / 7</span>
+  <button id="nextBtn" onclick="nextScene()" title="Next">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<script>
+const SCENE_DURATIONS = [5000, 8000, 7000, 8000, 8000, 8000, 7000];
+const SCENE_NAMES = [
+  'Intro',
+  'Dashboard',
+  'Transfer Detail',
+  'Email Activity',
+  'AI Chat',
+  'AI Drafts',
+  'Summary'
+];
+
+let currentScene = 0;
+let isPlaying = false;
+let timer = null;
+let progressTimer = null;
+let progressStart = null;
+let progressDuration = 0;
+
+const scenes = document.querySelectorAll('.scene');
+const total = scenes.length;
+
+// Build dots
+const dotNav = document.getElementById('dotNav');
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotNav.appendChild(d);
+}
+
+function goTo(idx) {
+  scenes[currentScene].classList.remove('active');
+  dotNav.children[currentScene].classList.remove('active');
+  currentScene = idx;
+  scenes[currentScene].classList.add('active');
+  dotNav.children[currentScene].classList.add('active');
+  document.getElementById('scene-label').textContent = `${currentScene + 1} / ${total}`;
+  document.getElementById('progressFill').style.width = '0%';
+
+  if (isPlaying) {
+    clearTimers();
+    startProgress();
+    scheduleNext();
+  }
+}
+
+function nextScene() {
+  goTo((currentScene + 1) % total);
+}
+
+function prevScene() {
+  goTo((currentScene - 1 + total) % total);
+}
+
+function clearTimers() {
+  if (timer) clearTimeout(timer);
+  if (progressTimer) clearAnimationFrame(progressTimer);
+  progressTimer = null;
+}
+
+let rafId = null;
+function clearAnimationFrame(id) {
+  cancelAnimationFrame(id);
+}
+
+function startProgress() {
+  progressStart = performance.now();
+  progressDuration = SCENE_DURATIONS[currentScene];
+  const fill = document.getElementById('progressFill');
+
+  function tick(now) {
+    const elapsed = now - progressStart;
+    const pct = Math.min((elapsed / progressDuration) * 100, 100);
+    fill.style.width = pct + '%';
+    if (elapsed < progressDuration) {
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  rafId = requestAnimationFrame(tick);
+}
+
+function scheduleNext() {
+  timer = setTimeout(() => {
+    nextScene();
+  }, SCENE_DURATIONS[currentScene]);
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const icon = document.getElementById('playIcon');
+  if (isPlaying) {
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>';
+    startProgress();
+    scheduleNext();
+  } else {
+    icon.innerHTML = '<path d="M6 4l15 8-15 8V4z"/>';
+    clearTimers();
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+}
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextScene();
+  if (e.key === 'ArrowLeft') prevScene();
+  if (e.key === 'p') togglePlay();
+});
+
+// Auto-start after a brief delay
+setTimeout(() => togglePlay(), 1200);
+</script>
+</body>
+</html>
