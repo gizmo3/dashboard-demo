@@ -1348,7 +1348,7 @@
 
   <!-- SCENE 1: Title -->
   <div class="scene title-scene active" id="scene-0">
-    <div style="z-index:1; text-align:center;">
+    <div style="z-index:1; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
       <span class="overline">Built for deVere Administrators</span>
       <div class="logo-mark">deVere<span class="accent">Admin</span></div>
       <div class="tagline">Pension Transfer Management Platform</div>
@@ -1753,38 +1753,6 @@
     </div>
   </div>
 
-  <!-- SCENE 7: Outro -->
-  <div class="scene outro-scene" id="scene-6">
-    <div class="outro-logo">deVere<span class="accent">Admin</span></div>
-    <div class="feature-grid">
-      <div class="feature-chip">
-        <div class="chip-icon blue">📊</div>
-        Transfer Tracking
-      </div>
-      <div class="feature-chip">
-        <div class="chip-icon green">✅</div>
-        Document Checklists
-      </div>
-      <div class="feature-chip">
-        <div class="chip-icon blue">📧</div>
-        Outlook Integration
-      </div>
-      <div class="feature-chip">
-        <div class="chip-icon purple">⚡</div>
-        AI Analysis & Drafts
-      </div>
-      <div class="feature-chip">
-        <div class="chip-icon amber">🔔</div>
-        Follow-up Alerts
-      </div>
-      <div class="feature-chip">
-        <div class="chip-icon blue">📄</div>
-        PDF Tool Bridge
-      </div>
-    </div>
-    <div class="outro-tagline">One platform. Every transfer. From first contact to completion.</div>
-    <div class="built-by">Built by Jordan · deVere Australia</div>
-  </div>
 
 </div>
 
@@ -1798,15 +1766,15 @@
   </button>
   <div class="dot-nav" id="dotNav"></div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <span id="scene-label">1 / 6</span>
+  <span id="scene-label">1 / 5</span>
   <button id="nextBtn" onclick="nextScene()" title="Next">
     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
   </button>
 </div>
 
 <script>
-const SCENE_DURATIONS = [5000, 8000, 7000, 8000, 8000, 7000];
-const SCENE_NAMES = ['Intro','Dashboard','Transfer Detail','Email Activity','AI Drafts','Summary'];
+const SCENE_DURATIONS = [5000, 8000, 7000, 8000, 8000];
+const SCENE_NAMES = ['Intro','Dashboard','Transfer Detail','Email Activity','AI Drafts'];
 
 let currentScene = 0;
 let isPlaying = false;
