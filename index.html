@@ -1599,7 +1599,7 @@
           <div class="ecm-header">
             <div class="ecm-sender">
               <strong>IVCM Operations Team</strong>
-              <span>operations@ivcm.com</span>
+              <span>ops@ivcm.com</span>
             </div>
             <div class="ecm-date">25 Feb 2025, 9:14 AM</div>
           </div>
@@ -1609,7 +1609,7 @@
             <span class="match-label">Auto-matched to:</span>
             <span class="match-name">James Hartley</span>
             <span class="match-reason">(Client name match, Scheme match)</span>
-            <button class="confirm-btn">Confirm ✓</button>
+            <span style="margin-left:auto;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(79,127,255,0.15);color:var(--blue);">📁 TRANSFER · Logged to Tracker</span>
           </div>
           <div class="ecm-actions">
             <button class="ecm-btn ai">⚡ AI Analyse</button>
@@ -1622,7 +1622,7 @@
           <div class="ecm-header">
             <div class="ecm-sender">
               <strong>Sarah Chen</strong>
-              <span>sarah.chen@gmail.com</span>
+              <span>sarah.chen@email.com</span>
             </div>
             <div class="ecm-date">24 Feb 2025, 3:42 PM 📎</div>
           </div>
@@ -1632,7 +1632,7 @@
             <span class="match-label">Auto-matched to:</span>
             <span class="match-name">Sarah Chen</span>
             <span class="match-reason">(Client name match)</span>
-            <button class="confirm-btn">Confirm ✓</button>
+            <span style="margin-left:auto;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(79,127,255,0.15);color:var(--blue);">📁 TRANSFER · Logged to Tracker</span>
           </div>
           <div class="ecm-actions">
             <button class="ecm-btn ai">⚡ AI Analyse</button>
@@ -1640,129 +1640,62 @@
           </div>
         </div>
 
-        <!-- Email 3 -->
+        <!-- Email 3 — non-transfer -->
         <div class="email-card-mock">
           <div class="ecm-header">
             <div class="ecm-sender">
-              <strong>Global SIPP Admin</strong>
-              <span>admin@globalsipp.co.uk</span>
+              <strong>Alex Sedgfield</strong>
+              <span>alex@devere.com.au</span>
             </div>
-            <div class="ecm-date">24 Feb 2025, 11:20 AM</div>
+            <div class="ecm-date">24 Feb 2025, 2:05 PM</div>
           </div>
-          <div class="ecm-subject">Pension Transfer — Action Required</div>
-          <div class="ecm-snippet">Please note that additional documentation is required to process this transfer. We require a wet signature on...</div>
+          <div class="ecm-subject">Team lunch Friday — are you in?</div>
+          <div class="ecm-snippet">Hey, just checking who's coming to lunch on Friday. Let me know by tomorrow if you can...</div>
+          <div class="auto-match-bar" style="border-color:rgba(107,107,154,0.25);background:rgba(107,107,154,0.06);">
+            <span class="match-label" style="color:var(--muted);">No transfer match detected</span>
+            <span style="margin-left:auto;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(107,107,154,0.15);color:var(--muted);">✉️ GENERAL · Draft Only</span>
+          </div>
           <div class="ecm-actions">
-            <button class="ecm-btn ai">⚡ AI Analyse</button>
             <button class="ecm-btn">↩ Draft Reply</button>
-            <select style="padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:11px;margin-left:auto;">
-              <option>Link to transfer...</option>
-            </select>
           </div>
         </div>
       </div>
     </div>
     <div class="feature-callout top-right">
-      <strong>Auto-matching</strong> links incoming emails to transfers using name, scheme, and keyword detection
+      <strong>Auto-classification</strong> — transfer emails logged to tracker; all others get a draft only
     </div>
     <div class="feature-callout bottom-left">
       <strong>AI Analyse</strong> reads email content and suggests tracker updates, status changes, and replies
     </div>
   </div>
 
-  <!-- SCENE 5: AI Chat -->
+  <!-- SCENE 5: AI Drafts -->
   <div class="scene dashboard-scene" id="scene-4" style="flex-direction:column; align-items:center; justify-content:flex-start;">
-    <div class="scene-headline"><h2>AI Senior Administrator</h2></div>
-    <div class="ai-scene-layout">
-      <div class="ai-sidebar-mock">
-        <div class="ai-header">
-          <div class="ai-title-block">
-            <div class="ai-avatar">AI</div>
-            <div>
-              <div class="ai-name">DeVere AI Admin</div>
-              <div class="ai-role">Senior Administrator</div>
-            </div>
-          </div>
-        </div>
-        <div class="ai-messages">
-          <div class="ai-msg bot">
-            <div class="ai-avatar-sm">AI</div>
-            <div class="ai-msg-content">
-              Hello, I'm your <strong>DeVere Senior Administrator</strong>. Ask me anything about your transfers.
-            </div>
-          </div>
-          <div class="ai-msg user">
-            <div class="ai-msg-content">Show me all stalled transfers</div>
-          </div>
-          <div class="ai-msg bot">
-            <div class="ai-avatar-sm">AI</div>
-            <div class="ai-msg-content">
-              <strong>3 stalled transfers</strong> (no update in 7+ days):<br><br>
-              <span class="ai-detail-row">James Hartley · IVCM · 14d ago</span>
-              <span class="ai-detail-row">Priya Sharma · IVCM · 8d ago</span>
-              <span class="ai-detail-row">David Park · SIPP · 9d ago</span>
-              <span class="ai-warning-inline">2 of these have overdue follow-up dates</span>
-            </div>
-          </div>
-          <div class="ai-msg user">
-            <div class="ai-msg-content">Draft a chase email for James Hartley</div>
-          </div>
-        </div>
-        <div class="ai-input-bar">
-          <input class="ai-input" type="text" placeholder="Ask about a client or transfer...">
-          <button class="ai-send">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="ai-context-panel">
-        <div class="context-header">Portfolio Overview</div>
-        <div class="context-body">
-          <div class="context-stat-row">
-            <div class="ctx-stat">
-              <div class="ctx-stat-val" style="color:var(--red);">7</div>
-              <div class="ctx-stat-label">Need Follow-up</div>
-            </div>
-            <div class="ctx-stat">
-              <div class="ctx-stat-val" style="color:var(--amber);">3</div>
-              <div class="ctx-stat-label">Stalled 7d+</div>
-            </div>
-            <div class="ctx-stat">
-              <div class="ctx-stat-val" style="color:var(--amber);">4</div>
-              <div class="ctx-stat-label">Overdue</div>
-            </div>
-          </div>
-          <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;">Stalled Transfers</div>
-          <div class="stalled-list">
-            <div class="stalled-item">
-              <div><strong>James Hartley</strong><br><span>IVCM · Needs Follow-up</span></div>
-              <span class="days-tag overdue">14d</span>
-            </div>
-            <div class="stalled-item">
-              <div><strong>David Park</strong><br><span>SIPP · Awaiting Client</span></div>
-              <span class="days-tag overdue">9d</span>
-            </div>
-            <div class="stalled-item">
-              <div><strong>Priya Sharma</strong><br><span>IVCM · Awaiting Client</span></div>
-              <span class="days-tag overdue">8d</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCENE 6: AI Drafts -->
-  <div class="scene dashboard-scene" id="scene-5" style="flex-direction:column; align-items:center; justify-content:flex-start;">
     <div class="scene-headline"><h2>AI Proactive Email Drafts</h2></div>
     <div class="drafts-scene-wrap">
-      <div class="drafts-header">
-        <h1>AI Drafts</h1>
-        <div class="ai-badge">
-          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          AI-Generated
+      <div class="drafts-header" style="flex-direction:column;align-items:flex-start;gap:10px;">
+        <div style="display:flex;align-items:center;gap:12px;width:100%;">
+          <h1>AI Drafts</h1>
+          <div class="ai-badge">
+            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            AI-Generated
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:var(--muted);">3 drafts ready to review</div>
         </div>
-        <div style="margin-left:auto;font-size:13px;color:var(--muted);">3 drafts ready to review</div>
+        <!-- Fyxer-style flow bar -->
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(79,127,255,0.06);border:1px solid rgba(79,127,255,0.18);border-radius:8px;width:100%;font-size:11px;">
+          <span style="color:var(--blue);font-weight:600;">Tracker detects issue</span>
+          <span style="color:var(--dim);">→</span>
+          <span style="color:var(--muted);">AI drafts email</span>
+          <span style="color:var(--dim);">→</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;color:var(--green);font-weight:600;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8l10 6 10-6"/></svg>
+            Auto-pushed to Outlook Drafts
+          </span>
+          <span style="color:var(--dim);">→</span>
+          <span style="color:var(--muted);">Adviser reviews &amp; sends</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--muted);font-style:italic;">No manual action required</span>
+        </div>
       </div>
       <div class="draft-cards">
         <div class="draft-card">
@@ -1777,8 +1710,8 @@
           <div class="draft-subj"><strong>Subject:</strong> Transfer Update Request — James Hartley / Scottish Widows</div>
           <div class="draft-preview">Hi IVCM Team, I hope you're well. I'm following up on the transfer for James Hartley regarding his Scottish Widows pension. Could you please advise on the current status and any outstanding...</div>
           <div class="draft-actions">
-            <button class="btn-outlook">Save to Outlook Drafts</button>
-            <button class="btn-review">Review & Edit</button>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Auto-pushed to Outlook Drafts</span>
+            <button class="btn-review" style="margin-left:8px;">Review & Edit</button>
             <button class="btn-review">Dismiss</button>
           </div>
         </div>
@@ -1792,10 +1725,10 @@
           </div>
           <div class="draft-reason">📋 Wet signature documents outstanding — 8 days since last contact</div>
           <div class="draft-subj"><strong>Subject:</strong> Action Required — Wet Signature Documents</div>
-          <div class="draft-preview">Hi Priya, I hope you're well. Just following up on the wet signature documents required for your pension transfer. Could you please sign the attached and return them at your earliest convenience...</div>
+          <div class="draft-preview">Hi Priya, just following up on the wet signature documents required for your pension transfer. Could you please sign the attached and return them at your earliest convenience...</div>
           <div class="draft-actions">
-            <button class="btn-outlook">Save to Outlook Drafts</button>
-            <button class="btn-review">Review & Edit</button>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Auto-pushed to Outlook Drafts</span>
+            <button class="btn-review" style="margin-left:8px;">Review & Edit</button>
             <button class="btn-review">Dismiss</button>
           </div>
         </div>
@@ -1811,8 +1744,8 @@
           <div class="draft-subj"><strong>Subject:</strong> Transfer Status Request — David Park</div>
           <div class="draft-preview">Dear Global SIPP Team, I'm writing to request an update on the pension transfer for our client David Park. Could you please confirm receipt of the documents submitted on 16 Feb...</div>
           <div class="draft-actions">
-            <button class="btn-outlook">Save to Outlook Drafts</button>
-            <button class="btn-review">Review & Edit</button>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Auto-pushed to Outlook Drafts</span>
+            <button class="btn-review" style="margin-left:8px;">Review & Edit</button>
             <button class="btn-review">Dismiss</button>
           </div>
         </div>
@@ -1865,30 +1798,21 @@
   </button>
   <div class="dot-nav" id="dotNav"></div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <span id="scene-label">1 / 7</span>
+  <span id="scene-label">1 / 6</span>
   <button id="nextBtn" onclick="nextScene()" title="Next">
     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
   </button>
 </div>
 
 <script>
-const SCENE_DURATIONS = [5000, 8000, 7000, 8000, 8000, 8000, 7000];
-const SCENE_NAMES = [
-  'Intro',
-  'Dashboard',
-  'Transfer Detail',
-  'Email Activity',
-  'AI Chat',
-  'AI Drafts',
-  'Summary'
-];
+const SCENE_DURATIONS = [5000, 8000, 7000, 8000, 8000, 7000];
+const SCENE_NAMES = ['Intro','Dashboard','Transfer Detail','Email Activity','AI Drafts','Summary'];
 
 let currentScene = 0;
 let isPlaying = false;
 let timer = null;
-let progressTimer = null;
+let rafId = null;
 let progressStart = null;
-let progressDuration = 0;
 
 const scenes = document.querySelectorAll('.scene');
 const total = scenes.length;
@@ -1902,62 +1826,42 @@ for (let i = 0; i < total; i++) {
   dotNav.appendChild(d);
 }
 
+// Activate first scene
+scenes[0].classList.add('active');
+
 function goTo(idx) {
   scenes[currentScene].classList.remove('active');
   dotNav.children[currentScene].classList.remove('active');
-  currentScene = idx;
+  currentScene = (idx + total) % total;
   scenes[currentScene].classList.add('active');
   dotNav.children[currentScene].classList.add('active');
   document.getElementById('scene-label').textContent = `${currentScene + 1} / ${total}`;
   document.getElementById('progressFill').style.width = '0%';
-
-  if (isPlaying) {
-    clearTimers();
-    startProgress();
-    scheduleNext();
-  }
+  if (isPlaying) { clearTimers(); startProgress(); scheduleNext(); }
 }
 
-function nextScene() {
-  goTo((currentScene + 1) % total);
-}
-
-function prevScene() {
-  goTo((currentScene - 1 + total) % total);
-}
+function nextScene() { goTo(currentScene + 1); }
+function prevScene() { goTo(currentScene - 1); }
 
 function clearTimers() {
-  if (timer) clearTimeout(timer);
-  if (progressTimer) clearAnimationFrame(progressTimer);
-  progressTimer = null;
-}
-
-let rafId = null;
-function clearAnimationFrame(id) {
-  cancelAnimationFrame(id);
+  if (timer) { clearTimeout(timer); timer = null; }
+  if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
 }
 
 function startProgress() {
   progressStart = performance.now();
-  progressDuration = SCENE_DURATIONS[currentScene];
+  const duration = SCENE_DURATIONS[currentScene];
   const fill = document.getElementById('progressFill');
-
   function tick(now) {
-    const elapsed = now - progressStart;
-    const pct = Math.min((elapsed / progressDuration) * 100, 100);
+    const pct = Math.min(((now - progressStart) / duration) * 100, 100);
     fill.style.width = pct + '%';
-    if (elapsed < progressDuration) {
-      rafId = requestAnimationFrame(tick);
-    }
+    if (pct < 100) rafId = requestAnimationFrame(tick);
   }
-
   rafId = requestAnimationFrame(tick);
 }
 
 function scheduleNext() {
-  timer = setTimeout(() => {
-    nextScene();
-  }, SCENE_DURATIONS[currentScene]);
+  timer = setTimeout(nextScene, SCENE_DURATIONS[currentScene]);
 }
 
 function togglePlay() {
@@ -1970,19 +1874,17 @@ function togglePlay() {
   } else {
     icon.innerHTML = '<path d="M6 4l15 8-15 8V4z"/>';
     clearTimers();
-    if (rafId) cancelAnimationFrame(rafId);
+    document.getElementById('progressFill').style.width = '0%';
   }
 }
 
-// Keyboard support
+// Keyboard controls: ← → Space P
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === ' ') nextScene();
-  if (e.key === 'ArrowLeft') prevScene();
-  if (e.key === 'p') togglePlay();
+  if (e.key === 'ArrowRight') { nextScene(); }
+  else if (e.key === 'ArrowLeft') { prevScene(); }
+  else if (e.key === ' ' || e.key === 'p' || e.key === 'P') { e.preventDefault(); togglePlay(); }
 });
 
-// Auto-start after a brief delay
-setTimeout(() => togglePlay(), 1200);
+// Auto-play on load
+togglePlay();
 </script>
-</body>
-</html>
